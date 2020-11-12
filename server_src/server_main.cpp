@@ -1,30 +1,54 @@
-#include "server.h"
-#include "../common_src/socket.h"
 #include <string.h>
+#include "server.h"
+#include "resources.h"
+#include "protocol_parser.h"
+#include "../common_src/socket.h"
 
 #define BLOCK_SIZE 64
 #define PORT_POS 1
+#define ROOT_POS 2
+#define PARAMS_QNTY 3
 
 int main(int argc, char *argv[]) {
-    unsigned char buffer[BLOCK_SIZE];
+    if (argc != PARAMS_QNTY) {
+        std::cout << "Not enough parameters" << std::endl;
+        return 1;
+    }
     size_t size;
-    Socket socket;
-    Socket client;
-    Server server(argv[PORT_POS], socket, client);
+    // Socket socket(true);
+    Server server(argv[PORT_POS]);
     if (server.connect()) {
         std::cout << "ERROR CONNECT" << std::endl;
         return 0;
     }
-    if (server.accept()) {
-        std::cout << "ERROR ACCEPT" << std::endl;
-        return 0;
-    }
-    memset(buffer, 0, BLOCK_SIZE);
+    std::string buffer;
+    std::stringstream streamReceived;
+    std::string input;
+    /*while (input.compare("q") != 0) {
+        getline(std::cin, input);
+        server.receive(buffer, BLOCK_SIZE);
+        streamReceived << buffer;
+        buffer.clear();
+    }*/ 
+    server.accept();
     while (size = server.receive(buffer, BLOCK_SIZE), size > 0) {
-        std::cout << buffer << std::endl;
-        memset(buffer, 0, BLOCK_SIZE);
+        streamReceived << buffer;
+        buffer.clear();
     }
-    fprintf(stdout, "%s", buffer);
+
+    ProtocolParser parser;
+    std::string method = "";
+    std::string resource = "";
+    std::string body = "";
+
+    std::stringstream root(argv[ROOT_POS]);
+    Resources resources(root.str());
+    Protocol *protocol =  parser.getProtocol(streamReceived, method, resource, body);
+    buffer += resources.manageResource(protocol->getMethod(), protocol->getResource(), protocol->getBody());
+
+    server.send(buffer, BLOCK_SIZE);
+
+    delete(protocol);
     server.close();
     return 0;
 }

@@ -2,6 +2,7 @@
 
 #include "socket.h"
 #include <string.h>
+#include <errno.h>
 
 #define ERROR_CODE -1
 
@@ -9,21 +10,50 @@ Socket::Socket() {
     this->fd = -1;
 }
 
+Socket::Socket(bool listens) {
+    this->fd = -1;
+    this->listens = listens;
+}
+
+Socket::Socket(int fd) {
+    this->fd = fd;
+    this->listens = false;
+}
+
+Socket::Socket(Socket&& other) {
+    this->fd = std::move(other.fd);
+    this->listens = std::move(other.listens);
+    other.fd = -1;
+}
+
+Socket& Socket::operator=(Socket&& other) {
+    if (this != &other) {
+        this->fd = std::move(other.fd);
+        this->listens = std::move(other.listens);
+        other.fd = -1;
+        other.listens = false;
+    }
+    return *this;
+}
+
+
 int Socket::_connect(struct addrinfo *info) {
     struct addrinfo *addr;
     int connection_status;
+    int new_fd = 0;
 
     for (addr = info; addr != NULL; addr = addr->ai_next) {
-        this->fd = socket(addr->ai_family,
+        new_fd = socket(addr->ai_family,
                         addr->ai_socktype, addr->ai_protocol);
-        if (this->fd != -1) {
-            connection_status = connect(this->fd,
+        if (new_fd != -1) {
+            connection_status = connect(new_fd,
                                 addr->ai_addr, addr->ai_addrlen);
             if (connection_status == 0) {
+                this->fd = new_fd;
                 return 0;
             }
-            std::cout << "Connection failure"  << std::endl;
         }
+        std::cout << "Connection failure"  << std::endl;
     }
 
     return ERROR_CODE;
@@ -32,16 +62,18 @@ int Socket::_connect(struct addrinfo *info) {
 int Socket::bindListen(struct addrinfo *info) {
     struct addrinfo *addr;
     int bind_status;
+    int new_fd = 0;
 
     for (addr = info; addr != NULL; addr = addr->ai_next) {
-        this->fd = socket(addr->ai_family,
+        new_fd = socket(addr->ai_family,
                         addr->ai_socktype, addr->ai_protocol);
-        if (this->fd != -1) {
-            bind_status = bind(this->fd, addr->ai_addr, addr->ai_addrlen);
-            if (bind_status == 0 && listen(this->fd, 1) == 0) {
+        if (new_fd != -1) {
+            bind_status = bind(new_fd, addr->ai_addr, addr->ai_addrlen);
+            if (bind_status == 0 && listen(new_fd, 1) == 0) {
+                this->fd = new_fd;
                 return 0;
             } else if (bind_status == -1) {
-                std::cout << "Bind error"  << std::endl;;
+                std::cout << "Bind error"  << std::endl;
             } else {
                 std::cout << "Listen error"  << std::endl;
             }
@@ -51,56 +83,62 @@ int Socket::bindListen(struct addrinfo *info) {
     return ERROR_CODE;
 }
 
-int Socket::start(const char *port, bool listens) {
+int Socket::start(const char *address, const char *port) {
     int status = 0;
-    struct addrinfo hints, *info;
+    struct addrinfo hints;
+    struct addrinfo *info;
+
     memset(&hints, 0, sizeof(struct addrinfo));
-    hints.ai_family = AF_UNSPEC;
+    hints.ai_family = AF_INET;
     hints.ai_socktype = SOCK_STREAM;
-    hints.ai_flags = AI_PASSIVE;
+    hints.ai_flags = listens ? AI_PASSIVE : 0;
 
     if (listens) {
         getaddrinfo(NULL, port, &hints, &info);
         status = bindListen(info);
     } else {
-        getaddrinfo(NULL, port, &hints, &info);
+        getaddrinfo(address, port, &hints, &info);
         status = _connect(info);
     }
+
     freeaddrinfo(info);
+
     return status;
 }
 
-int Socket::_send(unsigned char *message, size_t msg_len) {
+int Socket::_send(const char *message, size_t msg_len) {
     size_t bytes_sent = 0;
 
     while (bytes_sent < msg_len) {
         int actually_sent = send(this->fd, &message[bytes_sent],
                             msg_len - bytes_sent, MSG_NOSIGNAL);
-
         if (actually_sent == 0) {
+            fprintf(stderr, "Error in send :%s\n", strerror(errno));
             return 0;
         } else if (actually_sent == -1) {
-            // fprintf(stderr, "Error in send :%s\n", strerror(errno));
+            fprintf(stderr, "Error in send :%s\n", strerror(errno));
             return ERROR_CODE;
         }
         bytes_sent += (size_t)actually_sent;
     }
+
     return bytes_sent;
 }
 
-int Socket::_accept(Socket &client) {
+Socket Socket::_accept() {
     struct sockaddr_in address;
     socklen_t address_length = (socklen_t) sizeof(address);
+    int new_fd = 0;
 
-    client.fd = accept(this->fd, (struct sockaddr *)&address, &address_length);
-    if (client.fd == -1) {
-        std::cout << "Error in accept"  << std::endl;
-        return ERROR_CODE;
+    new_fd = accept(this->fd, (struct sockaddr *)&address, &address_length);
+    if (new_fd == -1) {
+        // throw
     }
-    return 0;
+
+    return Socket(new_fd);
 }
 
-int Socket::receive(unsigned char *buffer, size_t buffer_size) {
+int Socket::receive(char *buffer, size_t buffer_size) {
     size_t bytes_received = 0;
 
     while (bytes_received < buffer_size) {
@@ -108,22 +146,29 @@ int Socket::receive(unsigned char *buffer, size_t buffer_size) {
                                 buffer_size - bytes_received, 0);
         if (actually_received == -1) {
             std::cout << "Error in receive"  << std::endl;
-            // fprintf(stderr, "Error in receive: %s\n", strerror(errno));
             return ERROR_CODE;
         } else if (actually_received == 0) {
-            return 0;
+            bytes_received += (size_t)actually_received;
+            return bytes_received;
         }
         bytes_received += (size_t)actually_received;
     }
+
     return bytes_received;
 }
 
-int Socket::_close() {
+void Socket::_shutdown() {
+    shutdown(this->fd, SHUT_WR);
+}
+
+void Socket::_close() {
     shutdown(this->fd, SHUT_RDWR);
     close(this->fd);
-    return 0;
 }
 
 Socket::~Socket() {
-    this->fd = -1;
+    if (this->fd != -1) {
+        this->fd = -1;
+        this->listens = false;
+    }
 }

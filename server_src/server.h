@@ -3,24 +3,31 @@
 
 #include <iostream>
 #include <string>
+#include <bits/stdc++.h>
 #include "../common_src/socket.h"
-
-class Server {
+#include "client_handler.h"
+// #include "thread.h"
+//public Thread
+class Server  {
  private:
-    char *port;
-    Socket &skt;
-    Socket &clientSkt;
+    const char *port;
+    Socket skt;
+    Socket clientSkt;
  public:
     // Creates the server and its sockets
-    Server(char *port, Socket &socket, Socket &client);
+    Server(const char *port);
+    // void run() override;
     // Connects the server to its port
     int connect();
     // Accepts the conection of its client
-    int accept();
+
+    void accept();
     // The server receives a buffer from its client
-    int receive(unsigned char *buffer, size_t size);
+    int receive(std::string &buffer, size_t size);
+    int send(std::string &buffer, size_t size);
     // Closes the sockets of the server
     void close();
+    void shutdown();
     // Destroys the sockets and puts the port back to NULL
     ~Server();
 };
