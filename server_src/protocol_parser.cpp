@@ -3,7 +3,7 @@
 
 ProtocolParser::ProtocolParser() {}
 
-Protocol* ProtocolParser::getProtocol(std::stringstream &stream,
+void ProtocolParser::getProtocol(std::stringstream &stream,
                 std::string &method, std::string &resource, std::string &body) {
     size_t line = 1, bodyLine = 0;
     std::string buffer;
@@ -33,7 +33,6 @@ Protocol* ProtocolParser::getProtocol(std::stringstream &stream,
         buffer.clear();
         ++line;
     }
-    return new Protocol(method, resource, body);
 }
 
 ProtocolParser::~ProtocolParser() {

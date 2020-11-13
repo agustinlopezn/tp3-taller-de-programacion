@@ -5,14 +5,12 @@
 #include <sstream>
 #include <fstream>
 #include <iostream>
-#include "protocol.h"
 
 class ProtocolParser {
  private:
-    // std::ifstream file;
  public:
     ProtocolParser();
-    Protocol* getProtocol(std::stringstream &stream, std::string &method,
+    void getProtocol(std::stringstream &stream, std::string &method,
                         std::string &resource, std::string &body);
     ~ProtocolParser();
 };
