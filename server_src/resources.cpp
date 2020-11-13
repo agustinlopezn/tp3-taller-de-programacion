@@ -5,7 +5,8 @@
 #include "lock.h"
 
 #define GET_ERROR "HTTP/1.1 404 NOT FOUND\n\n"
-#define SUCCESS_MSG "HTTP/1.1 200 OK\n\n"
+#define SUCCESS_POST "HTTP/1.1 200 OK\n\n"
+#define SUCCESS_GET "HTTP/1.1 200 OK"
 #define POST_ERROR "HTTP/1.1 403 FORBIDDEN\n\n"
 #define METHOD_ERROR "HTTP/1.1 405 METHOD NOT ALLOWED\n\n"
 #define INVALID_ACTION " es un comando desconocido\n"
@@ -23,7 +24,7 @@ std::string Resources::getResource(std::string resourceName) {
     if (resources.find(resourceName) == resources.end()) {
         return GET_ERROR;  // new GetError();
     }
-    return SUCCESS_MSG+resources.at(resourceName);
+    return SUCCESS_GET+resources.at(resourceName);
 }
 std::string Resources::postResource(std::string resourceName,
                                 const std::string &resource) {
@@ -31,7 +32,7 @@ std::string Resources::postResource(std::string resourceName,
         return POST_ERROR;  // new PostError();
     }
     resources[resourceName] = resource;
-    return SUCCESS_MSG+resource;
+    return SUCCESS_POST+resource;
 }
 std::string Resources::getResponse(const std::string &method,
                 const std::string &resourceName, const std::string &resource) {
