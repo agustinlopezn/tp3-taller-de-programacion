@@ -7,7 +7,7 @@
 #define GET_ERROR "​HTTP/1.1 404 NOT FOUND\n\n"
 #define SUCCESS_MSG "HTTP/1.1 200 OK\n\n​"
 #define POST_ERROR "HTTP/1.1 403 FORBIDDEN\n\n"
-#define METHOD_ERROR " HTTP/1.1 405 METHOD NOT ALLOWED\n\n"
+#define METHOD_ERROR "HTTP/1.1 405 METHOD NOT ALLOWED\n\n"
 
 
 Resources::Resources(std::string root) {
