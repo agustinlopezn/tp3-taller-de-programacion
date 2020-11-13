@@ -12,14 +12,11 @@ void ClientHandler::run() {
         streamReceived << form;
         form.clear();
     }
-    std::string method = "";
-    std::string resource = "";
-    std::string body = "";
+    std::string method;
+    std::string resource;
+    std::string body;
     Protocol *protocol =  parser.getProtocol(streamReceived,
                             method, resource, body);
-    method = protocol->getMethod();
-    resource = protocol->getResource();
-    body = protocol->getBody();
     std::string buffer = resources->getResponse(method, resource, body);
     if (buffer.size() == 0) this->stop();
     communicator.send(buffer, &this->client);

@@ -2,8 +2,8 @@
 #define CLIENT_SRC_CLIENT_H_
 
 #include <string>
-#include <string.h>
 #include <utility>
+#include <string.h>
 #include "reader.h"
 #include "../common_src/socket.h"
 #include "../common_src/communicator.h"

@@ -28,6 +28,7 @@ Protocol* ProtocolParser::getProtocol(std::stringstream &stream,
         }
         if (line >= bodyLine && bodyLine != 0) {
             body += buffer;
+            body += '\n';
         }
         buffer.clear();
         ++line;

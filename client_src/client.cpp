@@ -30,7 +30,7 @@ void Client::start() {
     }
     this->shutdown();
     std::string buffer;
-    while (receive(buffer, BUFF_SIZE) > 0) {  // CHANGE
+    while (receive(buffer, BUFF_SIZE) > 0) {
         std::cout << buffer;
         buffer.clear();
     }
