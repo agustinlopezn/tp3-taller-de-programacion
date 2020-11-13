@@ -8,8 +8,7 @@ Communicator::Communicator() {
 }
 
 int Communicator::send(std::string &buffer, Socket *skt) {
-    return 0;
-    //return skt->_send(buffer.c_str(), buffer.size());
+    return skt->_send(buffer.c_str(), buffer.size());
 }
 
 std::string Communicator::receive(Socket *skt) {
@@ -21,6 +20,7 @@ std::string Communicator::receive(Socket *skt) {
         message += buf[i];
     }
     return message;
-}   
+}
+
 Communicator::~Communicator() {
 }

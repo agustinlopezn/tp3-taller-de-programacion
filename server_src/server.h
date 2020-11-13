@@ -1,27 +1,29 @@
-#ifndef SERVER_H
-#define SERVER_H
+#ifndef SERVER_SRC_SERVER_H_
+#define SERVER_SRC_SERVER_H_
 
 #include <iostream>
 #include <string>
+#include <utility>
 #include <bits/stdc++.h>
+#include "server_handler.h"
 #include "../common_src/socket.h"
-#include "client_handler.h"
-// #include "thread.h"
-//public Thread
-class Server  {
+#include "server_handler.h"
+#include "thread.h"
+
+class Server {
  private:
-    const char *port;
+    char *port;
     Socket skt;
     Socket clientSkt;
+    Resources resources;
  public:
     // Creates the server and its sockets
-    Server(const char *port);
-    // void run() override;
+    Server(char * rt, std::string root);
     // Connects the server to its port
     int connect();
     // Accepts the conection of its client
-
     void accept();
+    void run();
     // The server receives a buffer from its client
     int receive(std::string &buffer, size_t size);
     int send(std::string &buffer, size_t size);
@@ -32,4 +34,4 @@ class Server  {
     ~Server();
 };
 
-#endif // SERVER_H
+#endif  // SERVER_SRC_SERVER_H_

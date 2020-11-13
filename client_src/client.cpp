@@ -1,24 +1,39 @@
 #include "client.h"
 
-Client::Client(const char *address, const char *port, Socket &skt) :
-    address(address), port(port), skt(skt) {}
+#define BUFF_SIZE 64
 
-void Client::connect() {
-    this->skt.start(this->address, this->port);
-}
+Client::Client(const char *address, const char *port) :
+    address(address), port(port), skt(false) {}
 
-int Client::send(char *buffer, size_t size) {
-    return this->skt._send(buffer, size);
-}
 
 int Client::receive(std::string &buffer, size_t size) {
-    char buf[64];
-    memset(buf, 0, 64);
+    char buf[BUFF_SIZE];
+    memset(buf, 0, BUFF_SIZE);
     int bytesReceived = this->skt.receive(buf, size);
     for (int i = 0; i < bytesReceived; ++i) {
         buffer+=buf[i];
     }
     return bytesReceived;
+}
+
+void Client::start() {
+    Reader reader;
+    std::string buff;
+    char buffAux[BUFF_SIZE];
+    this->skt.start(this->address, this->port);
+    while (!reader.finished()) {
+        size_t size = reader.read(buffAux, BUFF_SIZE);
+        if (size < 1) break;
+        buff += buffAux;
+        communicator.send(buff, &this->skt);
+        buff.clear();
+    }
+    // this->shutdown();
+    std::string buffer;
+    while (receive(buffer, BUFF_SIZE) > 0) {  // CHANGE
+        std::cout << buffer;
+        buffer.clear();
+    }
 }
 
 void Client::shutdown() {
@@ -30,4 +45,5 @@ void Client::close() {
 }
 
 Client::~Client() {
+    this->close();
 }

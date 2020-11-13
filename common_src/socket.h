@@ -30,13 +30,13 @@ class Socket {
 
     // Accepts the conection and asigns it to the client fd
     Socket _accept();
-
     // Sends a message to the socket
     int _send(const char *message, size_t msg_len);
 
     // The socket receives a message comming from the connected socket
     int receive(char *buffer, size_t buffer_size);
 
+    bool isClosed();
     void _shutdown();
     // Closes the socket from both endpoints(RD and WR) if the socket
     // its a listener only the read channel otherwise.

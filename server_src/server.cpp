@@ -4,15 +4,24 @@
 #define SERVER_FLAG AI_PASSIVE
 #define ERROR_CODE -1
 
-Server::Server(const char *port) :
-    port(port), skt(true) {}
-/*
+Server::Server(char *port, std::string root) :
+    port(port), skt(true), resources(root) {}
+
 void Server::run() {
-    Socket skt(true);
-    skt.start(NULL, port);
-    Thread *handler = new ClientHandler(skt);
+    this->skt.start(NULL, port);
+    Thread *handler = new ServerHandler(skt, &resources);
+    handler->run();
+    std::string input;
+    while (input != "q") {
+        std::cin >> input;
+        std::cout << "input" << std::endl;
+        input.clear();
+    }
+    handler->stop();
+    handler->join();
+    delete(handler);
 }
-*/
+
 int Server::connect() {
     this->skt.start(NULL, this->port);
     return 0;

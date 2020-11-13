@@ -63,11 +63,17 @@ int Socket::bindListen(struct addrinfo *info) {
     struct addrinfo *addr;
     int bind_status;
     int new_fd = 0;
+    int val = 1;
 
     for (addr = info; addr != NULL; addr = addr->ai_next) {
         new_fd = socket(addr->ai_family,
                         addr->ai_socktype, addr->ai_protocol);
         if (new_fd != -1) {
+            if (setsockopt(new_fd, SOL_SOCKET, SO_REUSEADDR,
+                        &val, sizeof(val)) == -1) {
+                close(new_fd);
+                throw "Fallo setsockopt";
+            }
             bind_status = bind(new_fd, addr->ai_addr, addr->ai_addrlen);
             if (bind_status == 0 && listen(new_fd, 1) == 0) {
                 this->fd = new_fd;
@@ -108,7 +114,6 @@ int Socket::start(const char *address, const char *port) {
 
 int Socket::_send(const char *message, size_t msg_len) {
     size_t bytes_sent = 0;
-
     while (bytes_sent < msg_len) {
         int actually_sent = send(this->fd, &message[bytes_sent],
                             msg_len - bytes_sent, MSG_NOSIGNAL);
@@ -121,18 +126,15 @@ int Socket::_send(const char *message, size_t msg_len) {
         }
         bytes_sent += (size_t)actually_sent;
     }
-
     return bytes_sent;
 }
 
 Socket Socket::_accept() {
-    struct sockaddr_in address;
-    socklen_t address_length = (socklen_t) sizeof(address);
     int new_fd = 0;
 
-    new_fd = accept(this->fd, (struct sockaddr *)&address, &address_length);
+    new_fd = accept(this->fd, nullptr, nullptr);
     if (new_fd == -1) {
-        // throw
+        throw "Exception accept";
     }
 
     return Socket(new_fd);
@@ -155,6 +157,10 @@ int Socket::receive(char *buffer, size_t buffer_size) {
     }
 
     return bytes_received;
+}
+
+bool Socket::isClosed() {
+    return this->fd == -1;
 }
 
 void Socket::_shutdown() {

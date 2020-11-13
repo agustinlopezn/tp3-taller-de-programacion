@@ -1,7 +1,0 @@
-Servidor :
-* 'q' por stdin -> cerrar socket, esperar a que se liberen las conexiones y liberar recursos
-* Imprimer por stdout la primera linea del petitorio
-
-Cliente: 
-* Se imprime por stdout la respuesta del servidor 
-* 

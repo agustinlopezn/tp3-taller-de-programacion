@@ -12,6 +12,8 @@ class Thread {
     Thread();
     virtual ~Thread();
     virtual void run() = 0;
+    virtual void stop() = 0;
+    virtual bool isAlive() = 0;
     void start();
     void join();
     Thread(const Thread&) = delete;

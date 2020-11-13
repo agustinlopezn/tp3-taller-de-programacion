@@ -1,22 +1,26 @@
-#ifndef CLIENT_HANDLER_H_
-#define CLIENT_HANDLER_H_
+#ifndef SERVER_SRC_CLIENT_HANDLER_H_
+#define SERVER_SRC_CLIENT_HANDLER_H_
 
 #include <string>
-#include <iostream>
-#include <atomic>
-#include <vector>
+#include <utility>
 #include "thread.h"
+#include "resources.h"
+#include "protocol_parser.h"
 #include "../common_src/socket.h"
+#include "../common_src/communicator.h"
 
 class ClientHandler : public Thread {
  private:
-    std::vector<Thread*> clients;
-    std::atomic_bool accepting;
-    Socket &serverSkt;
+    Socket client;
+    bool running;
+    Communicator communicator;
+    Resources *resources;
  public:
-    ClientHandler(Socket &skt);
+    ClientHandler(Socket &client, Resources *resources);
     void run() override;
+    void stop() override;
+    bool isAlive() override;
     ~ClientHandler();
 };
 
-#endif // CLIENT_HANDLER_H_
+#endif  // SERVER_SRC_CLIENT_HANDLER_H_
