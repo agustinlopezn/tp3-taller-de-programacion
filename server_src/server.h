@@ -12,7 +12,7 @@ class Server {
     Socket skt;
     Resources resources;
  public:
-    Server(char *port, std::string root);
+    Server(char *port, const std::string &root);
     void accept();
     void run();
     ~Server();

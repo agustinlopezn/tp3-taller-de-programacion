@@ -24,15 +24,15 @@ std::string Resources::getResource(std::string resourceName) {
     return SUCCESS_MSG+resources.at(resourceName);
 }
 std::string Resources::postResource(std::string resourceName,
-                                    std::string resource) {
+                                const std::string &resource) {
     if (resourceName == "/") {
         return POST_ERROR;  // new PostError();
     }
     resources[resourceName] = resource;
     return SUCCESS_MSG+resource;
 }
-std::string Resources::getResponse(std::string method,
-                    std::string resourceName, std::string resource) {
+std::string Resources::getResponse(const std::string &method,
+                const std::string &resourceName, const std::string &resource) {
     Lock lock(m);
     if (method == "GET") return getResource(resourceName);
     if (method == "POST") return postResource(resourceName, resource);

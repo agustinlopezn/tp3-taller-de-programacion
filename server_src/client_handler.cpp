@@ -6,9 +6,8 @@ ClientHandler::ClientHandler(Socket &client, Resources *resources) :
 void ClientHandler::run() {
     ProtocolParser parser;
     std::stringstream streamReceived;
-    std::string form = "";
     while (true) {
-        form = communicator.receive(&this->client);
+        std::string form = communicator.receive(&this->client);
         if (form == "") break;
         streamReceived << form;
         form.clear();

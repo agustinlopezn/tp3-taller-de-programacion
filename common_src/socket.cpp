@@ -10,6 +10,7 @@
 
 Socket::Socket() {
     this->fd = -1;
+    this->listens = false;
 }
 
 Socket::Socket(bool listens) {
@@ -42,10 +43,9 @@ Socket& Socket::operator=(Socket&& other) {
 int Socket::_connect(struct addrinfo *info) {
     struct addrinfo *addr;
     int connection_status;
-    int new_fd = 0;
 
     for (addr = info; addr != NULL; addr = addr->ai_next) {
-        new_fd = socket(addr->ai_family,
+        int new_fd = socket(addr->ai_family,
                         addr->ai_socktype, addr->ai_protocol);
         if (new_fd != -1) {
             connection_status = connect(new_fd,
@@ -64,11 +64,10 @@ int Socket::_connect(struct addrinfo *info) {
 int Socket::bindListen(struct addrinfo *info) {
     struct addrinfo *addr;
     int bind_status;
-    int new_fd = 0;
     int val = 1;
 
     for (addr = info; addr != NULL; addr = addr->ai_next) {
-        new_fd = socket(addr->ai_family,
+        int new_fd = socket(addr->ai_family,
                         addr->ai_socktype, addr->ai_protocol);
         if (new_fd != -1) {
             if (setsockopt(new_fd, SOL_SOCKET, SO_REUSEADDR,

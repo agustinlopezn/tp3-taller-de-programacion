@@ -1,6 +1,6 @@
 #include "server.h"
 
-Server::Server(char *port, std::string root) :
+Server::Server(char *port, const std::string &root) :
     port(port), skt(true), resources(root) {}
 
 void Server::run() {

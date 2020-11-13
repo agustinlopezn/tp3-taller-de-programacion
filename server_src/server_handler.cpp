@@ -37,7 +37,7 @@ void ServerHandler::killClients(bool killAll) {
             delete *it;
             it = clients.erase(it);
         } else {
-            it++;
+            ++it;
         }
     }
 }

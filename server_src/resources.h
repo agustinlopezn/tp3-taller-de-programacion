@@ -10,11 +10,12 @@ class Resources{
     std::map <std::string, std::string> resources;
     std::mutex m;
     std::string getResource(std::string resourceName);
-    std::string postResource(std::string resourceName, std::string resource);
+    std::string postResource(std::string resourceName,
+                           const std::string &resource);
  public:
     explicit Resources(std::string root);
-    std::string getResponse(std::string method,
-               std::string resourceName, std::string resource);
+    std::string getResponse(const std::string &method,
+                const std::string &resourceName, const std::string &resource);
     ~Resources();
 };
 
