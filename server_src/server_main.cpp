@@ -12,6 +12,5 @@ int main(int argc, char *argv[]) {
     }
     Server server(argv[PORT_POS], argv[ROOT_POS]);
     server.run();
-    server.close();
     return 0;
 }

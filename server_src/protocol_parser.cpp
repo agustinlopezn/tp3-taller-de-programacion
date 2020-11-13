@@ -3,7 +3,8 @@
 
 ProtocolParser::ProtocolParser() {}
 
-Protocol* ProtocolParser::getProtocol(std::stringstream &stream, std::string &method, std::string &resource, std::string &body) {
+Protocol* ProtocolParser::getProtocol(std::stringstream &stream,
+                std::string &method, std::string &resource, std::string &body) {
     size_t line = 1, bodyLine = 0;
     std::string buffer;
     while (std::getline(stream, buffer, '\n')) {
@@ -32,7 +33,6 @@ Protocol* ProtocolParser::getProtocol(std::stringstream &stream, std::string &me
         buffer.clear();
         ++line;
     }
-    // std::cout << "BODY EN PARSER: " << body << std::endl;
     return new Protocol(method, resource, body);
 }
 

@@ -8,7 +8,7 @@
 #include <utility>
 #include <atomic>
 #include <netdb.h>
-
+#include <stdexcept>
 
 
 class Socket {

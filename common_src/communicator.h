@@ -1,3 +1,5 @@
+#ifndef COMMON_SRC_COMMUNICATOR_H_
+#define COMMON_SRC_COMMUNICATOR_H_
 
 #include <string>
 #include <string.h>
@@ -11,3 +13,5 @@ class Communicator {
     std::string receive(Socket *skt);
     ~Communicator();
 };
+
+#endif  // COMMON_SRC_COMMUNICATOR_H_

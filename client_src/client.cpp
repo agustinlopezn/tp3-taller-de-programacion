@@ -28,7 +28,7 @@ void Client::start() {
         communicator.send(buff, &this->skt);
         buff.clear();
     }
-    // this->shutdown();
+    this->shutdown();
     std::string buffer;
     while (receive(buffer, BUFF_SIZE) > 0) {  // CHANGE
         std::cout << buffer;

@@ -10,7 +10,6 @@ void Thread::start() { thread = std::thread(&Thread::run, this); }
 
 void Thread::join() { thread.join(); }
 
-/*Implementacion de constructores por movimiento*/
 Thread::Thread(Thread&& other) { this->thread = std::move(other.thread); }
 
 Thread& Thread::operator=(Thread&& other) {

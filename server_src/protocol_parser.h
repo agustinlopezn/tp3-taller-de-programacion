@@ -12,7 +12,8 @@ class ProtocolParser {
     // std::ifstream file;
  public:
     ProtocolParser();
-    Protocol* getProtocol(std::stringstream &stream, std::string &method, std::string &resource, std::string &body);
+    Protocol* getProtocol(std::stringstream &stream, std::string &method,
+                        std::string &resource, std::string &body);
     ~ProtocolParser();
 };
 

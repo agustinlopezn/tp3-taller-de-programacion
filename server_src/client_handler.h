@@ -12,9 +12,9 @@
 class ClientHandler : public Thread {
  private:
     Socket client;
-    bool running;
     Communicator communicator;
     Resources *resources;
+    bool running;
  public:
     ClientHandler(Socket &client, Resources *resources);
     void run() override;

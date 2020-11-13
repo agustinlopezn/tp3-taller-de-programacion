@@ -1,10 +1,12 @@
-#define _POSIX_C_SOURCE 201112L // Habilita getaddrinfo
+#define _POSIX_C_SOURCE 201112L  // Habilita getaddrinfo
 
 #include "socket.h"
 #include <string.h>
 #include <errno.h>
 
+
 #define ERROR_CODE -1
+#define MAX_QUEUE_CLIENTS 20
 
 Socket::Socket() {
     this->fd = -1;
@@ -75,7 +77,7 @@ int Socket::bindListen(struct addrinfo *info) {
                 throw "Fallo setsockopt";
             }
             bind_status = bind(new_fd, addr->ai_addr, addr->ai_addrlen);
-            if (bind_status == 0 && listen(new_fd, 1) == 0) {
+            if (bind_status == 0 && listen(new_fd, MAX_QUEUE_CLIENTS) == 0) {
                 this->fd = new_fd;
                 return 0;
             } else if (bind_status == -1) {
@@ -134,7 +136,7 @@ Socket Socket::_accept() {
 
     new_fd = accept(this->fd, nullptr, nullptr);
     if (new_fd == -1) {
-        throw "Exception accept";
+        throw std::invalid_argument("Socket");
     }
 
     return Socket(new_fd);

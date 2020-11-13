@@ -1,5 +1,5 @@
-#ifndef CLIENT_HANDLER_H_
-#define CLIENT_HANDLER_H_
+#ifndef SERVER_SRC_SERVER_HANDLER_H_
+#define SERVER_SRC_SERVER_HANDLER_H_
 
 #include <string>
 #include <iostream>
@@ -20,14 +20,13 @@ class ServerHandler : public Thread {
     void killClients(bool killAll);
 
  public:
-    ServerHandler(Socket &skt, Resources *resources);
+    ServerHandler(Socket skt, Resources *resources);
     void run() override;
     void stop() override;
     bool isAlive() override;
     void killInactiveClients();
     void killAllClients();
-    void stopAccepting();
     ~ServerHandler();
 };
 
-#endif // CLIENT_HANDLER_H_
+#endif  // SERVER_SRC_SERVER_HANDLER_H_

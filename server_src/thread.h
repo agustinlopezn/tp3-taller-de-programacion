@@ -1,5 +1,5 @@
-#ifndef __THREAD_H
-#define __THREAD_H
+#ifndef SERVER_SRC_THREAD_H_
+#define SERVER_SRC_THREAD_H_
 
 #include <thread>
 #include <utility>
@@ -22,4 +22,4 @@ class Thread {
     Thread& operator=(Thread&& other);
 };
 
-#endif  // THREAD_H_
+#endif  // SERVER_SRC_THREAD_H_
