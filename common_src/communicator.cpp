@@ -7,18 +7,15 @@
 Communicator::Communicator() {
 }
 
-int Communicator::send(std::string &buffer, Socket *skt) {
-    return skt->_send(buffer.c_str(), buffer.size());
+int Communicator::send(std::string &buffer, Socket &skt) {
+    return skt._send(buffer.c_str(), buffer.size());
 }
 
-std::string Communicator::receive(Socket *skt) {
+std::string Communicator::receive(Socket &skt) {
     std::string message = "";
     char buf[BLOCK_SIZE];
-    memset(buf, 0, BLOCK_SIZE);
-    int bytesReceived = skt->receive(buf, BLOCK_SIZE);
-    for (int i = 0; i < bytesReceived; ++i) {
-        message += buf[i];
-    }
+    int bytesReceived = skt.receive(buf, BLOCK_SIZE);
+    message.append(buf, bytesReceived);
     return message;
 }
 

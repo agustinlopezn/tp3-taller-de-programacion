@@ -25,7 +25,7 @@ void Client::start() {
         size_t size = reader.read(buffAux, BUFF_SIZE);
         if (size < 1) break;
         buff += buffAux;
-        communicator.send(buff, &this->skt);
+        communicator.send(buff, this->skt);
         buff.clear();
     }
     this->shutdown();

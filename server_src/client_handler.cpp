@@ -7,7 +7,7 @@ void ClientHandler::run() {
     ProtocolParser parser;
     std::stringstream streamReceived;
     while (true) {
-        std::string form = communicator.receive(&this->client);
+        std::string form = communicator.receive(this->client);
         if (form == "") break;
         streamReceived << form;
         form.clear();
@@ -18,7 +18,7 @@ void ClientHandler::run() {
     parser.getProtocol(streamReceived, method, resource, body);
     std::string buffer = resources->getResponse(method, resource, body);
     if (buffer.size() == 0) this->stop();
-    communicator.send(buffer, &this->client);
+    communicator.send(buffer, this->client);
     buffer.clear();
     this->stop();
 }
