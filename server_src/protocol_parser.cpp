@@ -11,6 +11,7 @@ Protocol *ProtocolParser::getProtocol(std::stringstream &stream,
     stream >> resource;
     stream >> protocol;
     std::cout << method << " " + resource << " " + protocol << std::endl;
+    std::getline(stream, buffer, '\n');
 
     while (std::getline(stream, buffer, '\n')) {
         if (buffer.empty()) {

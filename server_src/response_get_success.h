@@ -4,7 +4,7 @@
 #include <string>
 #include "response.h"
 
-#define SUCCESS_GET "HTTP/1.1 200 OK\n\n"
+#define SUCCESS_GET "HTTP/1.1 200 OK"
 
 class GetSuccess : public Response {
  private:
