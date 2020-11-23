@@ -19,30 +19,40 @@ class Socket {
     int bindListen(struct addrinfo *info);
 
  public:
+    // Constructor y destructor
     Socket();
+    ~Socket();
+
+    // Constructor que inicializa con el parametro
+    // pasado al atributo de la clase
     explicit Socket(bool listens);
     explicit Socket(int fd);
+
+    // Constructor por movimiento
     Socket(Socket&& other);
     Socket& operator=(Socket&& other);
-    // Starts the socket, binds it and puts it in listen mode if the boolean
-    // is_server is true, otherwise connects it to the address.
+
+    // Startea el socket,lo bindea y lo pone en modo escuchante si el booleando
+    // is_server es true, sino realiza un connect al address pasado por param.
     int start(const char *address, const char *port);
 
-    // Accepts the conection and asigns it to the client fd
+    // Acepta la coneccion entrante
     Socket _accept();
-    // Sends a message to the socket
+    // Envia message al socket
     int _send(const char *message, size_t msg_len);
 
-    // The socket receives a message comming from the connected socket
+    // El socket recibe un mensaje proveniente del socket conectado
     int receive(char *buffer, size_t buffer_size);
 
+    // Devuelve verdadero si el socket esta en un estado invalido
+    // false en otro caso
     bool isClosed();
-    void _shutdown();
-    // Closes the socket from both endpoints(RD and WR) if the socket
-    // its a listener only the read channel otherwise.
-    void _close();
 
-    ~Socket();
+    // Realiza un shutdown del canal de escritura
+    void _shutdown();
+
+    // Cierra el socket tanto para lectura como para escritura
+    void _close();
 };
 
 #endif  // COMMON_SRC_SOCKET_H_

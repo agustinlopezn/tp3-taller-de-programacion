@@ -12,10 +12,14 @@ class Server {
     Socket skt;
     Resources resources;
  public:
+    // Constructor y destructor
     Server(char *port, const std::string &root);
-    void accept();
-    void run();
     ~Server();
+
+    // Metodo principal que lanza un thread server handler
+    // sediendole el ownership del socket. Se detiene cuando
+    // se oprime el caracter 'q'
+    void run();
 };
 
 #endif  // SERVER_SRC_SERVER_H_

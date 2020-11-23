@@ -15,12 +15,15 @@ class Client {
     Communicator communicator;
     Socket skt;
  public:
+    // Constructor y destructor
     Client(const char *address, const char *port);
-    void start();
-    int receive(std::string &buffer, size_t size);
-    void close();
-    void shutdown();
+
     ~Client();
+
+    // Metodo princpipal del cliente, encargado de leer y enviar el petitorio
+    // para luego recibir la respuesta del servidor e imprimirla por salida
+    // estandar
+    void start();
 };
 
 #endif  // CLIENT_SRC_CLIENT_H_

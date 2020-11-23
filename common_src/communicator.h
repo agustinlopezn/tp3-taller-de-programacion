@@ -8,10 +8,18 @@
 class Communicator {
  private:
  public:
+    // Constructor y destructor
     Communicator();
-    int send(std::string &buffer, Socket &skt);
-    std::string receive(Socket &skt);
+
     ~Communicator();
+
+    // Envia el string buffer mediante el socket pasado por parametro,
+    // devolviendo la cantidad de bytes que efectivamente envio
+    int send(std::string &buffer, Socket &skt);
+
+    // Devuelve un string conteniendo la tira de bytes recibida
+    // mediante el socket pasado por parametro
+    std::string receive(Socket &skt);
 };
 
 #endif  // COMMON_SRC_COMMUNICATOR_H_

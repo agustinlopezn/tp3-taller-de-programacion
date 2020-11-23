@@ -20,13 +20,27 @@ class ServerHandler : public Thread {
     void killClients(bool killAll);
 
  public:
+    // Constructor y destructor
     ServerHandler(Socket skt, Resources *resources);
-    void run() override;
-    void stop() override;
-    bool isAlive() override;
-    void killInactiveClients();
-    void killAllClients();
     ~ServerHandler();
+
+    // Realiza override de run de Thread:
+    // Recibe el petitorio, lo parsea y envia la respuesta al cliente
+    void run() override;
+
+    // Realiza override de stop de Thread:
+    // Pasa a modo no aceptador y cierra su socket
+    void stop() override;
+
+    // Realiza override de isAlive de Thread:
+    // Devuelve true si el socket del servidor esta en un estado valido
+    bool isAlive() override;
+
+    // Realiza una limpieza de los threads clientes que estan desconectados
+    void killInactiveClients();
+
+    // Realiza una limpieza de todos los threads clientes
+    void killAllClients();
 };
 
 #endif  // SERVER_SRC_SERVER_HANDLER_H_

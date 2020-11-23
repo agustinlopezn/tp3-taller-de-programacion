@@ -3,6 +3,8 @@
 
 #include <mutex>
 
+// Class que aplica RAII para bloquear/desbloquear el mutex
+
 class Lock {
  private:
     std::mutex &m;
@@ -11,6 +13,7 @@ class Lock {
     Lock(Lock&&) = delete;
     Lock& operator=(Lock&&) = delete;
  public:
+    // Constructor y destructor
     explicit Lock(std::mutex &m);
     ~Lock();
 };

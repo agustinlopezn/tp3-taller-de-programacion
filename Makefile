@@ -8,7 +8,7 @@
 
 # Nombre del ejecutable.
 target = tp
-target-tsan = tp-tsan
+#target-tsan = tp-tsan
 
 # ExtensiÃ³n de los archivos a compilar (c para C, cpp o cc o cxx para C++).
 extension = cpp
@@ -141,7 +141,7 @@ COMPILERFLAGS-TSAN = $(COMPILERFLAGS) -fsanitize=thread
 # REGLAS
 #########
 
-all: server
+all: server client
 
 o_common_files = $(patsubst %.$(extension),%.o,$(fuentes_common))
 o_client_files = $(patsubst %.$(extension),%.o,$(fuentes_client))

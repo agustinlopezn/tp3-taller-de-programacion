@@ -4,19 +4,24 @@
 #include <map>
 #include <string>
 #include <mutex>
+#include "response.h"
+#include "protocol.h"
 
 class Resources{
  private:
     std::map <std::string, std::string> resources;
     std::mutex m;
-    std::string getResource(std::string resourceName);
-    std::string postResource(std::string resourceName,
+    Response *getResource(std::string resourceName);
+    Response *postResource(std::string resourceName,
                            const std::string &resource);
  public:
+    // Constructor y destructor
     explicit Resources(std::string root);
-    std::string getResponse(const std::string &method,
-                const std::string &resourceName, const std::string &resource);
     ~Resources();
+
+    // Devuelve un objeto Response dinamico que genera polimorficamente
+    // la respuesta del servidor al protocolo indicado
+    Response *getResponse(Protocol *protocol);
 };
 
 #endif  // SERVER_SRC_RESOURCES_H_

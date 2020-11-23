@@ -15,12 +15,15 @@ void ClientHandler::run() {
     std::string method;
     std::string resource;
     std::string body;
-    parser.getProtocol(streamReceived, method, resource, body);
-    std::string buffer = resources->getResponse(method, resource, body);
+    Protocol *protocol =  parser.getProtocol(streamReceived,
+                                        method, resource, body);
+    Response *r = resources->getResponse(protocol);
+    std::string buffer = r->respond();
     if (buffer.size() == 0) this->stop();
     communicator.send(buffer, this->client);
     buffer.clear();
     this->stop();
+    delete(r);
 }
 
 bool ClientHandler::isAlive() {
