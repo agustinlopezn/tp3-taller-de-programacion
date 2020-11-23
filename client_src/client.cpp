@@ -3,13 +3,12 @@
 #define BUFF_SIZE 64
 
 Client::Client(const char *address, const char *port) :
-    address(address), port(port), skt(false) {}
+    address(address), port(port), skt(address, port, false) {}
 
 void Client::start() {
     Reader reader;
     std::string buff;
     char buffAux[BUFF_SIZE];
-    this->skt.start(this->address, this->port);
     while (!reader.finished()) {
         size_t size = reader.read(buffAux, BUFF_SIZE);
         if (size < 1) break;

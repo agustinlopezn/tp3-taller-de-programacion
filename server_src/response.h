@@ -9,7 +9,7 @@ class Response {
     // Metodo a sobreescribir por las clases herederas
     // realizando implementacion propia de la respuesta
     // a un petitorio HTTP
-    virtual std::string respond() = 0;
+    virtual std::string operator()() = 0;
 
     // Destructor
     virtual ~Response() = default;

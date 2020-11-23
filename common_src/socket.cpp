@@ -1,26 +1,16 @@
-#define _POSIX_C_SOURCE 201112L  // Habilita getaddrinfo
+#define _POSIX_C_SOURCE 201112L  // Allows getaddrinfo
 
 #include "socket.h"
 #include <string.h>
 #include <errno.h>
 
-
 #define ERROR_CODE -1
 #define MAX_QUEUE_CLIENTS 20
 
-Socket::Socket() {
-    this->fd = -1;
-    this->listens = false;
-}
-
-Socket::Socket(bool listens) {
+Socket::Socket(const char *address, const char *port, bool listens) {
     this->fd = -1;
     this->listens = listens;
-}
-
-Socket::Socket(int fd) {
-    this->fd = fd;
-    this->listens = false;
+    start(address, port);
 }
 
 Socket::Socket(Socket&& other) {
@@ -39,6 +29,15 @@ Socket& Socket::operator=(Socket&& other) {
     return *this;
 }
 
+Socket::Socket() {
+    this->fd = -1;
+    this->listens = false;
+}
+
+Socket::Socket(int fd) {
+    this->fd = fd;
+    this->listens = false;
+}
 
 int Socket::_connect(struct addrinfo *info) {
     struct addrinfo *addr;
@@ -55,7 +54,7 @@ int Socket::_connect(struct addrinfo *info) {
                 return 0;
             }
         }
-        std::cout << "Connection failure"  << std::endl;
+        throw "Connection failure";
     }
 
     return ERROR_CODE;
@@ -73,16 +72,16 @@ int Socket::bindListen(struct addrinfo *info) {
             if (setsockopt(new_fd, SOL_SOCKET, SO_REUSEADDR,
                         &val, sizeof(val)) == -1) {
                 close(new_fd);
-                throw "Fallo setsockopt";
+                throw "Setsockopt failed";
             }
             bind_status = bind(new_fd, addr->ai_addr, addr->ai_addrlen);
             if (bind_status == 0 && listen(new_fd, MAX_QUEUE_CLIENTS) == 0) {
                 this->fd = new_fd;
                 return 0;
             } else if (bind_status == -1) {
-                std::cout << "Bind error"  << std::endl;
+                throw "Bind error";
             } else {
-                std::cout << "Listen error"  << std::endl;
+                throw "Listen error";
             }
             _close();
         }
@@ -118,12 +117,8 @@ int Socket::_send(const char *message, size_t msg_len) {
     while (bytes_sent < msg_len) {
         int actually_sent = send(this->fd, &message[bytes_sent],
                             msg_len - bytes_sent, MSG_NOSIGNAL);
-        if (actually_sent == 0) {
-            fprintf(stderr, "Error in send :%s\n", strerror(errno));
-            return 0;
-        } else if (actually_sent == -1) {
-            fprintf(stderr, "Error in send :%s\n", strerror(errno));
-            return ERROR_CODE;
+        if (actually_sent <= 0) {
+            throw "Error in send";
         }
         bytes_sent += (size_t)actually_sent;
     }
@@ -148,7 +143,7 @@ int Socket::receive(char *buffer, size_t buffer_size) {
         int actually_received = recv(this->fd, &buffer[bytes_received],
                                 buffer_size - bytes_received, 0);
         if (actually_received == -1) {
-            std::cout << "Error in receive"  << std::endl;
+           throw "Error in receive";
             return ERROR_CODE;
         } else if (actually_received == 0) {
             bytes_received += (size_t)actually_received;
@@ -174,8 +169,6 @@ void Socket::_close() {
 }
 
 Socket::~Socket() {
-    if (this->fd != -1) {
-        this->fd = -1;
-        this->listens = false;
-    }
+    if (this->fd == -1) return;
+    _close();
 }

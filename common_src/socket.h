@@ -25,7 +25,7 @@ class Socket {
 
     // Constructor que inicializa con el parametro
     // pasado al atributo de la clase
-    explicit Socket(bool listens);
+    Socket(const char *address, const char *port, bool listens);
     explicit Socket(int fd);
 
     // Constructor por movimiento

@@ -13,7 +13,7 @@ class PostError : public Response {
     PostError() {}
     ~PostError() {}
 
-    virtual std::string respond() override {
+    virtual std::string operator()() override {
         return POST_ERROR;
     }
 };

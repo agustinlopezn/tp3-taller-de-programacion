@@ -16,7 +16,7 @@ class GetSuccess : public Response {
 
     ~GetSuccess() {}
 
-    virtual std::string respond() override {
+    virtual std::string operator()() override {
         return SUCCESS_GET+resource;
     }
 };

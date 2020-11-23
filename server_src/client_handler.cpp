@@ -17,13 +17,14 @@ void ClientHandler::run() {
     std::string body;
     Protocol *protocol =  parser.getProtocol(streamReceived,
                                         method, resource, body);
-    Response *r = resources->getResponse(protocol);
-    std::string buffer = r->respond();
+    Response *response = resources->getResponse(protocol);
+    std::string buffer = (*response)();
     if (buffer.size() == 0) this->stop();
     communicator.send(buffer, this->client);
     buffer.clear();
+    delete(response);
+    delete(protocol);
     this->stop();
-    delete(r);
 }
 
 bool ClientHandler::isAlive() {

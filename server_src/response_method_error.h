@@ -17,7 +17,7 @@ class MethodError : public Response {
 
     ~MethodError() {}
 
-    virtual std::string respond() override{
+    virtual std::string operator()() override {
         return METHOD_ERROR+method+INVALID_ACTION;
     }
 };

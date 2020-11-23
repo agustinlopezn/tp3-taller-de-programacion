@@ -1,10 +1,9 @@
 #include "server.h"
 
 Server::Server(char *port, const std::string &root) :
-    port(port), skt(true), resources(root) {}
+    port(port), skt(NULL, port, true), resources(root) {}
 
 void Server::run() {
-    this->skt.start(NULL, port);
     Thread *handler = new ServerHandler(std::move(skt), &resources);
     handler->start();
     while (getc(stdin) != 'q') {

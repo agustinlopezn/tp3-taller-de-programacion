@@ -14,7 +14,7 @@ class GetError : public Response {
 
     ~GetError() {}
 
-    virtual std::string respond() override {
+    virtual std::string operator()() override {
         return GET_ERROR;
     }
 };

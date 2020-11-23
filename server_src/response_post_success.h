@@ -17,7 +17,7 @@ class PostSuccess : public Response {
 
     ~PostSuccess() {}
 
-    virtual std::string respond() override {
+    virtual std::string operator()() override {
         return SUCCESS_POST + resource;
     }
 };
